@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-slide="9" data-total="14">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>09 · Live inference pipeline animation — Predicting AFib at the Edge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+
+<!-- === GLOBAL UI CHROME === -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+<div class="edit-hotzone" id="editHotzone" aria-hidden="true"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏</button>
+<div class="edit-banner" id="editBanner">Edit mode — click any text · <span>Ctrl+S</span> saves</div>
+
+<section class="slide dark pipeline-slide" id="slide-9" aria-label="Live inference pipeline animation">
+  <header class="sh">
+    <div class="sh-left"><span class="sh-dot"></span>09 · Live Pipeline</div>
+    <div class="sh-right">End-to-End Inference · Continuously Running</div>
+  </header>
+
+  <div class="ca">
+    <!-- Eyebrow row with live mode indicator -->
+    <div class="eyebrow reveal" style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+      <span>// simulation toggles every ~12 s between sinus rhythm &amp; AFib — watch the pipeline react</span>
+      <span class="pipe-mode-text" style="color:var(--green);font-weight:700;">● Sinus Rhythm</span>
+    </div>
+
+    <!-- Signal row: heart + scrolling PPG canvas + smartwatch -->
+    <div class="signal-row reveal">
+      <div class="heart-cell">
+        <svg class="heart-svg" viewBox="0 0 48 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path class="heart-path" d="M24,40 C24,40 3,25 3,13 C3,7 9,3 15.5,3 C18.5,3 21,5 24,9 C27,5 29.5,3 32.5,3 C39,3 45,7 45,13 C45,25 24,40 24,40Z"/>
+        </svg>
+        <div class="heart-bpm" id="heartBpm">72 BPM</div>
+      </div>
+
+      <div class="canvas-cell">
+        <div class="canvas-topbar">
+          <span class="mlabel" style="font-size:calc(var(--small)*0.84);color:var(--t-muted);">PPG SIGNAL — LIVE CAPTURE</span>
+          <span class="mode-badge sr" id="modeBadge">NORMAL SR</span>
+        </div>
+        <canvas class="ppg-live-canvas" id="ppgCanvas" aria-label="Live scrolling PPG waveform"></canvas>
+      </div>
+
+      <div class="watch-cell">
+        <div class="watch-icon">⌚</div>
+        <div class="watch-lbl">Wearable<br/>PPG</div>
+      </div>
+    </div>
+
+    <!-- 6-stage pipeline -->
+    <div class="pipeline-row reveal">
+      <!-- Each stage has its own mini canvas showing a live animation -->
+      <div class="ps" id="ps-capture">
+        <div class="ps-nm mlabel">📡 Capture</div>
+        <canvas class="ps-canvas" id="sc-capture"></canvas>
+        <div class="ps-vl" id="pv-capture">—</div>
+      </div>
+      <div class="ps-conn">→</div>
+      <div class="ps" id="ps-peak">
+        <div class="ps-nm mlabel">◉ Peak Det.</div>
+        <canvas class="ps-canvas" id="sc-peak"></canvas>
+        <div class="ps-vl" id="pv-peak">—</div>
+      </div>
+      <div class="ps-conn">→</div>
+      <div class="ps" id="ps-rr">
+        <div class="ps-nm mlabel">↔ RR Interval</div>
+        <canvas class="ps-canvas" id="sc-rr"></canvas>
+        <div class="ps-vl" id="pv-rr">—</div>
+      </div>
+      <div class="ps-conn">→</div>
+      <div class="ps" id="ps-norm">
+        <div class="ps-nm mlabel">⚖ Normalise</div>
+        <canvas class="ps-canvas" id="sc-norm"></canvas>
+        <div class="ps-vl" id="pv-norm">—</div>
+      </div>
+      <div class="ps-conn">→</div>
+      <div class="ps" id="ps-model">
+        <div class="ps-nm mlabel">⬡ CNN Model</div>
+        <canvas class="ps-canvas" id="sc-model"></canvas>
+        <div class="ps-vl" id="pv-model">—</div>
+        <div class="ps-prog"><div class="ps-prog-fill" id="modelProgFill"></div></div>
+      </div>
+      <div class="ps-conn">→</div>
+      <div class="ps" id="ps-score">
+        <div class="ps-nm mlabel">◎ Risk p_t</div>
+        <canvas class="ps-canvas" id="sc-score"></canvas>
+        <div class="ps-vl" id="pv-score">—</div>
+      </div>
+    </div>
+
+    <!-- Risk score bar -->
+    <div class="score-display reveal">
+      <div class="score-track-wrap">
+        <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+        <div class="score-ticks"><span>0 — SR</span><span>0.5</span><span>AF — 1</span></div>
+      </div>
+      <div class="score-label" id="scoreLabel" style="color:var(--green);">● Sinus Rhythm</div>
+      <div class="score-num" id="scoreNum">0.000</div>
+    </div>
+  </div>
+</section>
+
+<script src="../assets/main.js"></script>
+</body>
+</html>

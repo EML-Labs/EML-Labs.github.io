@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" data-slide="7" data-total="14">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>07 · RR interval calculation — Predicting AFib at the Edge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+
+<!-- === GLOBAL UI CHROME === -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+<div class="edit-hotzone" id="editHotzone" aria-hidden="true"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏</button>
+<div class="edit-banner" id="editBanner">Edit mode — click any text · <span>Ctrl+S</span> saves</div>
+
+<section class="slide dark" id="slide-7" aria-label="RR interval calculation">
+  <header class="sh">
+    <div class="sh-left"><span class="sh-dot"></span>07 · Heart Rate Variability</div>
+    <div class="sh-right">RR Interval Calculation</div>
+  </header>
+
+  <div class="ca">
+    <div class="eyebrow reveal">// the heartbeat timing signature</div>
+    <h2 class="slide-title reveal">The gap between heartbeats — the <span class="acc">RR interval</span> — tells us if the rhythm is healthy or not.</h2>
+
+    <div class="diag-layout" style="grid-template-columns: 1fr 1.4fr;">
+      <div class="diag-text">
+        <ul class="bul reveal">
+          <li><strong>RR interval</strong> — the time (in milliseconds) between two consecutive heartbeat peaks</li>
+          <li><strong>Healthy heart</strong> — intervals are similar to each other, with only small natural variation</li>
+          <li><strong>AFib heart</strong> — intervals jump around wildly with no predictable pattern, like a shuffled playlist</li>
+          <li><strong>These timing patterns</strong> are rich enough for AI to tell SR from AFib — no bulky waveform needed</li>
+          <li><strong>Privacy-first</strong> — we only store timing numbers, not your raw heartbeat waveform</li>
+        </ul>
+
+        <!-- RR regularity comparison: Normal vs AFib -->
+        <div class="rr-cmp reveal">
+          <div class="rr-cmp-row">
+            <span class="rr-cmp-lbl" style="color:var(--green);">Normal SR</span>
+            <svg id="rrCmpNormal" class="rr-cmp-svg" viewBox="0 0 220 28" preserveAspectRatio="none" aria-label="Regular heartbeat intervals">
+              <line x1="0" y1="24" x2="220" y2="24" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+              <line x1="20"  y1="5" x2="20"  y2="24" stroke="#22d4a0" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="48"  y1="5" x2="48"  y2="24" stroke="#22d4a0" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="76"  y1="5" x2="76"  y2="24" stroke="#22d4a0" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="104" y1="5" x2="104" y2="24" stroke="#22d4a0" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="132" y1="5" x2="132" y2="24" stroke="#22d4a0" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="160" y1="5" x2="160" y2="24" stroke="#22d4a0" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="188" y1="5" x2="188" y2="24" stroke="#22d4a0" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="rr-cmp-row">
+            <span class="rr-cmp-lbl" style="color:var(--red);">AFib</span>
+            <svg id="rrCmpAfib" class="rr-cmp-svg" viewBox="0 0 220 28" preserveAspectRatio="none" aria-label="Irregular AFib heartbeat intervals">
+              <line x1="0" y1="24" x2="220" y2="24" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+              <line x1="14"  y1="5" x2="14"  y2="24" stroke="#ff4f64" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="28"  y1="5" x2="28"  y2="24" stroke="#ff4f64" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="72"  y1="5" x2="72"  y2="24" stroke="#ff4f64" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="92"  y1="5" x2="92"  y2="24" stroke="#ff4f64" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="103" y1="5" x2="103" y2="24" stroke="#ff4f64" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="152" y1="5" x2="152" y2="24" stroke="#ff4f64" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="175" y1="5" x2="175" y2="24" stroke="#ff4f64" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rr-vis reveal">
+        <svg id="rrMainSvg" viewBox="0 0 580 100" preserveAspectRatio="xMidYMid meet" aria-label="RR interval diagram showing two heartbeats with interval measurement">
+          <!-- Grid -->
+          <line x1="0" y1="65" x2="580" y2="65" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+          <!-- Beat 1 -->
+          <path id="rrBeatPath1" class="ecg-draw" fill="none" stroke="#38b6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+            d="M 0,65 L 44,65 C 54,65 60,49 68,49 C 76,49 82,65 93,65 L 114,65 L 121,70 L 132,12 L 140,74 L 148,65 L 166,65 C 179,65 185,45 200,45 C 215,45 221,65 236,65 L 274,65" />
+
+          <!-- Visual bridge between beats -->
+          <path id="rrBridgePath" fill="none" stroke="#38b6ff" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.45"
+            d="M 274,65 C 286,65 300,65 312,65 C 316,65 320,65 324,65" />
+
+          <!-- Beat 2 -->
+          <path id="rrBeatPath2" class="ecg-draw" fill="none" stroke="#38b6ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+            d="M 324,65 L 344,65 C 354,65 360,49 368,49 C 376,49 382,65 393,65 L 414,65 L 421,70 L 432,12 L 440,74 L 448,65 L 466,65 C 479,65 485,45 500,45 C 515,45 521,65 536,65 L 580,65" />
+
+          <!-- R-peak markers (red dots) -->
+          <circle class="rr-ann" cx="132" cy="12" r="5.5" fill="#ff4f64"/>
+          <circle class="rr-ann" cx="432" cy="12" r="5.5" fill="#ff4f64"/>
+
+          <!-- Labels R₁ R₂ -->
+          <g class="rr-ann" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#ff4f64">
+            <text x="125" y="5" text-anchor="middle">R₁</text>
+            <text x="440" y="5" text-anchor="middle">R₂</text>
+          </g>
+
+          <!-- Dotted drop lines from R peaks to arrow -->
+          <g class="rr-ann" stroke="rgba(255,79,100,0.4)" stroke-width="1" stroke-dasharray="4,3">
+            <line x1="132" y1="12" x2="132" y2="84"/>
+            <line x1="432" y1="12" x2="432" y2="84"/>
+          </g>
+
+          <!-- Double-headed arrow for RR interval -->
+          <g class="rr-ann">
+            <line x1="135" y1="84" x2="429" y2="84" stroke="#22d4a0" stroke-width="1.8"/>
+            <polygon points="135,80 128,84 135,88" fill="#22d4a0"/>
+            <polygon points="429,80 436,84 429,88" fill="#22d4a0"/>
+          </g>
+
+          <!-- RR label -->
+          <g class="rr-ann">
+            <rect x="245" y="74" width="90" height="18" rx="4" fill="var(--bg-dark)"/>
+            <text x="290" y="87" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" font-weight="700" fill="#22d4a0">RR Interval</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="../assets/main.js"></script>
+<script>
+  (function animateRrSlide() {
+    const normalSvg = document.getElementById('rrCmpNormal');
+    const afibSvg = document.getElementById('rrCmpAfib');
+    const mainSvg = document.getElementById('rrMainSvg');
+    if (!normalSvg || !afibSvg || !mainSvg) return;
+
+    const normalBars = Array.from(normalSvg.querySelectorAll('line')).slice(1);
+    const afibBars = Array.from(afibSvg.querySelectorAll('line')).slice(1);
+    const rrDots = Array.from(mainSvg.querySelectorAll('circle.rr-ann'));
+    const rrAnn = Array.from(mainSvg.querySelectorAll('.rr-ann'));
+    const rrArrow = mainSvg.querySelector('g.rr-ann line[x1="135"]');
+    const rrArrowL = mainSvg.querySelector('g.rr-ann polygon[points^="135,80"]');
+    const rrArrowR = mainSvg.querySelector('g.rr-ann polygon[points^="429,80"]');
+    const rrLabelRect = mainSvg.querySelector('g.rr-ann rect');
+    const rrLabelText = mainSvg.querySelector('g.rr-ann text');
+    const rrBeat1 = document.getElementById('rrBeatPath1');
+    const rrBeat2 = document.getElementById('rrBeatPath2');
+    const rrBridge = document.getElementById('rrBridgePath');
+
+    const baseNormalX = normalBars.map(b => Number(b.getAttribute('x1')));
+    const baseAfibX = afibBars.map(b => Number(b.getAttribute('x1')));
+
+    const baseL = 132;
+    const baseR = 432;
+    const basePeakY = 12;
+    const beatAnim = [rrBeat1, rrBeat2, rrBridge]
+      .filter(Boolean)
+      .map((el, i) => {
+        const len = el.getTotalLength();
+        el.style.strokeDasharray = `${Math.max(16, len * 0.22)} ${len}`;
+        el.style.strokeDashoffset = '0';
+        el.style.transition = 'none';
+        return { el, len, off: i * (len * 0.25), speed: 155 };
+      });
+    const beatTrack = beatAnim.slice(0, 2); // beat1 + beat2 only
+
+    // Find parametric path locations closest to the visual R-peak markers.
+    function closestLenToPoint(pathEl, len, tx, ty) {
+      let bestL = 0;
+      let bestD = Infinity;
+      for (let l = 0; l <= len; l += 1.5) {
+        const pt = pathEl.getPointAtLength(l);
+        const d = Math.hypot(pt.x - tx, pt.y - ty);
+        if (d < bestD) { bestD = d; bestL = l; }
+      }
+      return bestL;
+    }
+    const rPeakLens = [
+      beatTrack[0] ? closestLenToPoint(beatTrack[0].el, beatTrack[0].len, baseL, basePeakY) : 0,
+      beatTrack[1] ? closestLenToPoint(beatTrack[1].el, beatTrack[1].len, baseR, basePeakY) : 0,
+    ];
+
+    let last = performance.now();
+    let t = 0;
+    const masterHz = 1.15; // one shared rhythm for all visuals
+
+    function setBarX(bar, x) {
+      bar.setAttribute('x1', x.toFixed(2));
+      bar.setAttribute('x2', x.toFixed(2));
+    }
+
+    function frame(ts) {
+      const dt = Math.max(0, (ts - last) / 1000);
+      last = ts;
+      t += dt;
+      const phase = (t * masterHz * Math.PI * 2);
+
+      // Animate both main ECG beats + connector flow
+      beatAnim.forEach(p => {
+        p.off = (p.off - p.speed * dt) % p.len;
+        if (p.off < 0) p.off += p.len;
+        p.el.style.strokeDashoffset = p.off.toFixed(2);
+      });
+
+      // Normal SR strip: tiny smooth jitter (mostly regular)
+      normalBars.forEach((bar, i) => {
+        const x = baseNormalX[i]
+          + Math.sin(phase + i * 0.45) * 0.55
+          + Math.sin(phase * 0.5 + i * 0.2) * 0.25;
+        setBarX(bar, x);
+      });
+
+      // AFib strip: still irregular, but synchronized to same master phase
+      afibBars.forEach((bar, i) => {
+        const x = baseAfibX[i]
+          + Math.sin(phase * (1.05 + i * 0.12) + i * 0.9) * (1.4 + (i % 3) * 0.85)
+          + Math.cos(phase * (1.7 + i * 0.08) + i * 0.4) * 0.7;
+        setBarX(bar, x);
+      });
+
+      // Main RR demo: breathing RR distance + pulsing markers/annotations
+      const l = baseL;
+      const r = baseR;
+
+      rrDots[0]?.setAttribute('cx', l.toFixed(2));
+      rrDots[1]?.setAttribute('cx', r.toFixed(2));
+      rrDots.forEach((d) => d.setAttribute('cy', basePeakY.toFixed(2)));
+
+      // Pulse each R marker when the animated ECG trace head reaches that R-peak.
+      const peakGlow = [0, 0];
+      beatTrack.forEach((p, i) => {
+        const head = p.off; // dash head position along the path
+        const peak = rPeakLens[i];
+        const rawDiff = Math.abs(head - peak);
+        const diff = Math.min(rawDiff, p.len - rawDiff);
+        peakGlow[i] = Math.max(0, 1 - diff / (p.len * 0.1));
+      });
+      rrDots.forEach((d, i) => {
+        const pulse = 5.1 + peakGlow[i] * 1.9;
+        d.setAttribute('r', pulse.toFixed(2));
+        d.style.opacity = (0.45 + peakGlow[i] * 0.55).toFixed(2);
+      });
+
+      rrArrow?.setAttribute('x1', (l + 3).toFixed(2));
+      rrArrow?.setAttribute('x2', (r - 3).toFixed(2));
+      rrArrowL?.setAttribute('points', `${(l+3).toFixed(2)},80 ${(l-4).toFixed(2)},84 ${(l+3).toFixed(2)},88`);
+      rrArrowR?.setAttribute('points', `${(r-3).toFixed(2)},80 ${(r+4).toFixed(2)},84 ${(r-3).toFixed(2)},88`);
+
+      const cx = (l + r) / 2;
+      rrLabelRect?.setAttribute('x', (cx - 45).toFixed(2));
+      rrLabelText?.setAttribute('x', cx.toFixed(2));
+
+      const annOpacity = (0.35 + Math.max(peakGlow[0], peakGlow[1]) * 0.65).toFixed(2);
+      rrAnn.forEach(el => { el.style.opacity = annOpacity; });
+
+      requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
+  })();
+</script>
+</body>
+</html>

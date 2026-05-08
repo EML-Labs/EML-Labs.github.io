@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-slide="2" data-total="14">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>02 · Why this matters — Predicting AFib at the Edge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+
+<!-- === GLOBAL UI CHROME === -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+<div class="edit-hotzone" id="editHotzone" aria-hidden="true"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏</button>
+<div class="edit-banner" id="editBanner">Edit mode — click any text · <span>Ctrl+S</span> saves</div>
+
+<section class="slide dark" id="slide-2" aria-label="Why this matters">
+  <header class="sh">
+    <div class="sh-left"><span class="sh-dot"></span>02 · Motivation</div>
+    <div class="sh-right">Why AFib Prediction Matters</div>
+  </header>
+
+  <div class="ca">
+    <div class="eyebrow reveal">The clinical problem</div>
+    <h2 class="slide-title reveal">AFib is a <span class="acc">silent epidemic</span> — and we are unprepared.</h2>
+
+    <div class="three-col">
+      <div class="tcol card card-pad reveal">
+        <div class="tc-num">1 in 4</div>
+        <h3>Lifetime Risk</h3>
+        <style>
+          /* Small, local-only animation for the highlighted patient */
+          @keyframes patientPulse {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50%      { transform: translateY(-4px) scale(1.08); }
+          }
+          .tc-visual-wrap {
+            min-height: 112px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+          }
+          .patient-avatars {
+            margin: 0.35rem 0 0.45rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 0.35rem;
+            width: 100%;
+          }
+          .patient-avatar {
+            flex: 1 1 0;
+            width: 100%;
+            max-width: 92px;
+            height: auto;
+            max-height: 76px;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+          }
+          .patient-avatar.patient-red {
+            filter: drop-shadow(0 0 10px rgba(255,79,100,0.55));
+            animation: patientPulse 1.6s ease-in-out infinite;
+          }
+        </style>
+        <div class="tc-visual-wrap">
+          <div class="patient-avatars" aria-label="One in four people highlighted">
+            <img class="patient-avatar" src="../images/Patient-Green.svg" alt="Person" />
+            <img class="patient-avatar" src="../images/Patient-Green.svg" alt="Person" />
+            <img class="patient-avatar patient-red" src="../images/Patient-Red.svg" alt="Highlighted person" />
+            <img class="patient-avatar" src="../images/Patient-Green.svg" alt="Person" />
+          </div>
+        </div>
+        <p>Adults over 40 will develop atrial fibrillation at some point in their lifetime — most without warning.</p>
+        <div class="tc-src">// Chugh et al., Circulation 2014</div>
+      </div>
+      <div class="tcol c-cyan card card-pad reveal">
+        <div class="tc-num">30%</div>
+        <h3>Silent Cases</h3>
+        <style>
+          @keyframes icebergFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+          }
+          .tc-visual-wrap {
+            min-height: 112px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+          }
+          .iceberg-wrap {
+            margin: 0.35rem 0 0.45rem;
+            border: 1px solid rgba(56,182,255,0.22);
+            border-radius: 10px;
+            background: linear-gradient(180deg, rgba(56,182,255,0.08) 0 46%, rgba(56,182,255,0.2) 46% 48%, rgba(56,182,255,0.08) 48% 100%);
+            overflow: hidden;
+            padding: 0.25rem 0.3rem;
+          }
+          .iceberg-svg { width: 100%; height: 92px; display: block; }
+          .iceberg-top { animation: icebergFloat 2.4s ease-in-out infinite; transform-origin: center; }
+        </style>
+        <div class="tc-visual-wrap">
+          <div class="iceberg-wrap" aria-label="Iceberg showing hidden asymptomatic burden">
+            <svg class="iceberg-svg" viewBox="0 0 260 110" role="img">
+              <line x1="0" y1="50" x2="260" y2="50" stroke="rgba(56,182,255,0.45)" stroke-width="2" />
+              <polygon class="iceberg-top" points="108,50 130,14 152,50" fill="#9de7ff" />
+              <polygon points="82,50 130,102 178,50" fill="#38b6ff" opacity="0.9" />
+              <text x="184" y="38" text-anchor="start" fill="#e8fbff" font-size="10" font-family="JetBrains Mono, monospace">Diagnosed</text>
+              <text x="184" y="82" text-anchor="start" fill="#e8fbff" font-size="10" font-family="JetBrains Mono, monospace">Silent / Asymptomatic</text>
+            </svg>
+          </div>
+        </div>
+        <p>Of AF cases are entirely asymptomatic. Many patients discover their condition only <em>after</em> a disabling stroke.</p>
+        <div class="tc-src">// Freedman et al., JACC 2017</div>
+      </div>
+      <div class="tcol c-green card card-pad reveal">
+        <div class="tc-num">60–70%</div>
+        <h3>Prevention Potential</h3>
+        <div class="tc-visual-wrap" aria-label="Prevention potential visual" style="margin:0.35rem 0 0.45rem;">
+          <svg viewBox="0 0 260 92" width="100%" height="86" role="img">
+            <defs>
+              <linearGradient id="gpShield" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#52e6b4" />
+                <stop offset="100%" stop-color="#22d4a0" />
+              </linearGradient>
+            </defs>
+
+            <!-- Shield with check -->
+            <path d="M34 16 L62 24 L62 46 C62 58 52 68 34 76 C16 68 6 58 6 46 L6 24 Z" fill="url(#gpShield)" opacity="0.95">
+              <animateTransform attributeName="transform" type="scale" values="1;1.05;1" dur="1.8s" repeatCount="indefinite" additive="sum" />
+            </path>
+            <path d="M20 45 L30 55 L49 35" fill="none" stroke="#0b1220" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-dasharray="40" stroke-dashoffset="40">
+              <animate attributeName="stroke-dashoffset" values="40;0;0" dur="1.8s" repeatCount="indefinite" />
+            </path>
+
+            <!-- Downward risk trend -->
+            <line x1="84" y1="72" x2="248" y2="72" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" />
+            <polyline points="90,32 124,40 158,50 192,60 226,66" fill="none" stroke="#22d4a0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-dasharray="220" stroke-dashoffset="220">
+              <animate attributeName="stroke-dashoffset" values="220;0;0" dur="2s" repeatCount="indefinite" />
+            </polyline>
+            <circle cx="90" cy="32" r="4" fill="#22d4a0" opacity="0">
+              <animate attributeName="opacity" values="0;1;1" dur="2s" begin="0s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="124" cy="40" r="4" fill="#22d4a0" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" dur="2s" begin="0s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="158" cy="50" r="4" fill="#22d4a0" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;1;1" dur="2s" begin="0s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="192" cy="60" r="4" fill="#22d4a0" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;0;1;1" dur="2s" begin="0s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="226" cy="66" r="4" fill="#22d4a0" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;0;0;1;1" dur="2s" begin="0s" repeatCount="indefinite" />
+            </circle>
+
+            <text x="84" y="20" fill="#baf7df" font-size="10" font-family="JetBrains Mono, monospace">early detection + anticoagulants</text>
+            <text x="176" y="86" fill="#22d4a0" font-size="10" font-family="JetBrains Mono, monospace">lower stroke risk</text>
+          </svg>
+        </div>
+        <p>Stroke risk reduction achievable with early detection and anticoagulant therapy — if AF is caught in time.</p>
+        <div class="tc-src">// Hart et al., Ann Int Med 2007</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="../assets/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-slide="10" data-total="14">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>10 · Why edge deployment — Predicting AFib at the Edge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+
+<!-- === GLOBAL UI CHROME === -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+<div class="edit-hotzone" id="editHotzone" aria-hidden="true"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏</button>
+<div class="edit-banner" id="editBanner">Edit mode — click any text · <span>Ctrl+S</span> saves</div>
+
+<section class="slide dark" id="slide-10" aria-label="Why edge deployment">
+  <header class="sh">
+    <div class="sh-left"><span class="sh-dot"></span>10 · System Design</div>
+    <div class="sh-right">Why Edge Deployment?</div>
+  </header>
+
+  <div class="ca">
+    <div class="eyebrow reveal">// why we run the AI on the watch itself, not in the cloud</div>
+    <h2 class="slide-title reveal">Sending data to the cloud is too slow, too risky, and <span class="acc-red">fails exactly when you need it most.</span></h2>
+
+    <div class="edge-grid">
+      <div class="edge-card card card-pad reveal">
+        <div class="edge-icon ei-cyan">⚡</div>
+        <h4>Real-Time Alerting</h4>
+        <p>No waiting for a server response. The watch detects AFib in under a second — right when you need it, during the episode itself.</p>
+      </div>
+      <div class="edge-card card card-pad reveal">
+        <div class="edge-icon ei-blue">🔒</div>
+        <h4>Data Privacy</h4>
+        <p>Your heart data never leaves your device. No server stores it, no company sees it — health data stays private by design, not policy.</p>
+      </div>
+      <div class="edge-card card card-pad reveal">
+        <div class="edge-icon ei-green">🌍</div>
+        <h4>Connectivity-Free</h4>
+        <p>Works on a plane, in a rural village, in a hospital with no Wi-Fi. Internet is optional — critical in low-resource and remote healthcare settings.</p>
+      </div>
+      <div class="edge-card card card-pad reveal">
+        <div class="edge-icon ei-amber">💰</div>
+        <h4>Cost Efficiency</h4>
+        <p>No cloud server bills. Once deployed, each additional user costs essentially nothing to monitor — scale to millions of devices for free.</p>
+      </div>
+      <div class="edge-card card card-pad reveal">
+        <div class="edge-icon ei-purple">⌚</div>
+        <h4>Wearable-Native</h4>
+        <p>Our model is small enough to run on a smartwatch chip. It only needs heartbeat timing as input — not a complex signal processor or GPU.</p>
+      </div>
+      <div class="edge-card card card-pad reveal">
+        <div class="edge-icon ei-red">🔄</div>
+        <h4>Continuous Monitoring</h4>
+        <p>AFib episodes come and go unpredictably. A 5-minute hospital ECG almost always misses them. 24/7 smartwatch monitoring catches every one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="../assets/main.js"></script>
+</body>
+</html>
