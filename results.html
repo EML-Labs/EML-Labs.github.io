@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results | EML Labs</title>
+  <meta name="description" content="Experimental results: AUROC 0.991 on IRIDIA-AF (50 seeds), zero-shot 0.955 on SHDB-AF, per-patient early warning (median 50.9 min lead), and on-device Apple Watch deployment.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%232f5d8a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M2 12h4l2-6 4 12 2.5-7 1.5 3H22'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <header class="page-hero">
+    <div class="container">
+      <span class="eyebrow reveal"><span class="dot"></span> Experimental results</span>
+      <h1 class="reveal">Accurate, low-variance, and robust to unseen patients</h1>
+      <p class="reveal">Benchmarked under a strict patient-independent protocol on IRIDIA-AF, then transferred zero-shot to an independent dataset.</p>
+    </div>
+  </header>
+
+  <!-- HEADLINE STATS -->
+  <section style="padding-top:36px">
+    <div class="container">
+      <div class="stats reveal">
+        <div class="stat"><div class="num">0.991</div><div class="lbl">AUROC · IRIDIA-AF (in-domain)</div></div>
+        <div class="stat"><div class="num">0.955</div><div class="lbl">AUROC · SHDB-AF (zero-shot)</div></div>
+        <div class="stat"><div class="num">98.4%</div><div class="lbl">AF sensitivity, patient-independent</div></div>
+        <div class="stat"><div class="num">2.5×</div><div class="lbl">Lower seed variance vs. cross-entropy</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARTS AT A GLANCE -->
+  <section style="padding-top:44px">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">At a glance</p>
+        <h2>The headline numbers, interactively</h2>
+        <p>Hover any bar for the exact value. Charts follow the light/dark theme.</p>
+      </div>
+      <div class="grid grid-2">
+        <div class="chart-card reveal">
+          <h3>AUROC by loss function</h3>
+          <p class="chart-sub">Fixed patient-independent test split, mean over 50 seeds (hover for ± std).</p>
+          <div class="chart-wrap"><canvas id="chart-loss-auroc"></canvas></div>
+        </div>
+        <div class="chart-card reveal">
+          <h3>Detection AUROC by dataset</h3>
+          <p class="chart-sub">In-domain on IRIDIA-AF, and zero-shot transfer to SHDB-AF with no fine-tuning.</p>
+          <div class="chart-wrap"><canvas id="chart-auroc"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOSS COMPARISON -->
+  <section style="padding-top:24px">
+    <div class="container split">
+      <div class="reveal prose">
+        <span class="eyebrow"><span class="dot"></span> Loss comparison</span>
+        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem);margin:16px 0 12px">Patient-aware loss wins on the metric that matters</h2>
+        <p>Holding the encoder, sampler, and probe fixed and varying only the loss over <strong>50 independent seeds</strong>, the patient-aware objective reaches <strong>AUROC 0.991 ± 0.005</strong>, ahead of supervised contrastive (0.986 ± 0.007) and binary cross-entropy (0.980 ± 0.012) with a statistically significant gap (paired <em>t</em>-test <strong>p &lt; 10⁻⁵</strong>). Its real edge is stability: it cuts seed-to-seed AUROC variance by <strong>1.6×</strong> vs. SupCon and <strong>2.5×</strong> vs. BCE. Accuracy and F1 are comparable across losses. Reliability, not raw threshold accuracy, is where it wins.</p>
+        <div class="pills">
+          <span class="pill">Patient-aware contrastive</span>
+          <span class="pill">Supervised contrastive</span>
+          <span class="pill">Binary cross-entropy</span>
+        </div>
+      </div>
+      <div class="chart-card reveal">
+        <h3>AUROC distribution across 50 seeds</h3>
+        <p class="chart-sub">Box = interquartile range, line = median, ◆ = mean, whiskers = min–max, dots = individual seeds.</p>
+        <div class="chart-wrap" style="height:330px"><canvas id="loss-dist"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMBEDDING GEOMETRY -->
+  <section style="padding-top:20px">
+    <div class="container split">
+      <div class="chart-card reveal">
+        <h3>Per-patient SR cohesion</h3>
+        <p class="chart-sub">Higher is better, consistency of each patient's sinus-rhythm structure in the embedding.</p>
+        <div class="chart-wrap"><canvas id="chart-cohesion"></canvas></div>
+      </div>
+      <div class="reveal prose">
+        <span class="eyebrow"><span class="dot"></span> Embedding geometry</span>
+        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem);margin:16px 0 12px">Why it generalises: per-patient cohesion</h2>
+        <p>Examining the learned embeddings directly reveals the real driver of transfer. The patient-aware objective achieves the highest <strong>per-patient sinus-rhythm cohesion (0.850)</strong>, against 0.800 for supervised contrastive and 0.772 for binary cross-entropy. Notably, cross-entropy produces the cleanest <em>global</em> class separation yet the most disordered <em>per-patient</em> structure, which is exactly why a linear probe on its features breaks down on unseen patients.</p>
+        <p>Rather than crushing every patient into a single class prototype, the encoder keeps each individual's rhythm structure intact: precisely what lets a linear probe succeed on a patient it has never seen. <span style="color:var(--text-dim)">(Embedding-geometry analysis from the extended study, arXiv:2606.23570.)</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXTERNAL VALIDATION -->
+  <section style="padding-top:20px">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow"><span class="dot"></span> External validation</span>
+        <h2>Zero-shot transfer to an unseen dataset</h2>
+        <p>The frozen encoder, trained only on IRIDIA-AF, was evaluated on the independent SHDB-AF dataset with no fine-tuning.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zM2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></div><h3>Different cohort, no tuning</h3><p>SHDB-AF is a separate Japanese Holter population (2,980 windows from 16 patients). The encoder is applied as-is, a different device, population, and country.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><h3>AUROC 0.955 retained</h3><p>Detection quality holds up off-the-shelf: evidence that patient-aware representations capture AF itself, not cohort-specific quirks.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><h3>Deployment-ready signal</h3><p>Strong zero-shot transfer is what real-world screening demands, a model that works before it has ever met the wearer.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEYOND DETECTION -->
+  <section style="padding-top:20px">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow"><span class="dot"></span> Beyond detection</span>
+        <h2>The same representation predicts and deploys</h2>
+        <p>Reused with no retraining, the frozen embedding also gives early warning, and runs on a real wearable.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>50.9 min median lead</h3><p>A per-patient sinus-to-AF projection crosses its boundary a median of 50.9 minutes before annotated onset across eleven calibrated test patients, no forecaster, no retraining.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M12 6v4l2 1"/></svg></div><h3>156 µs on Apple Watch</h3><p>Deployed to CoreML on the watch's Neural Engine, a forward pass runs in a measured median of 156 µs per window, inference is effectively free on-device.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 7v10l8 4 8-4V7"/></svg></div><h3>33 KB compressed</h3><p>2-bit palettization-aware training shrinks the model 12.6× to a 33 KB package that still holds 95.4% accuracy and AUROC 0.985.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAKEAWAY -->
+  <section style="padding-top:20px">
+    <div class="container">
+      <div class="cta-band reveal">
+        <h2>Read the full analysis</h2>
+        <p>The full paper and dissertation contain complete benchmarks, ablations, the early-warning study, and the on-device deployment.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="assets/pdf/paper.pdf" target="_blank" rel="noopener">Read the paper (PDF)</a>
+          <a class="btn btn-ghost" href="publications.html">All publications</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="assets/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="assets/js/charts.js"></script>
+  <script src="assets/js/lossdist.js"></script>
+</body>
+</html>

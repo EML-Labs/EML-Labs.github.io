@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Demo | EML Labs</title>
+  <meta name="description" content="An interactive demonstration of the patient-aware AFib model: feed RR intervals and watch the Poincaré plot, attention, latent space and the SR→AF centroid score update live, with real-time ablation.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%232f5d8a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M2 12h4l2-6 4 12 2.5-7 1.5 3H22'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <header class="page-hero">
+    <div class="container">
+      <span class="eyebrow reveal">Interactive demonstration</span>
+      <h1 class="reveal">See the model in action</h1>
+      <p class="reveal">A live demonstration of the patient-aware model. Feed it a 200-beat RR-interval window and watch where its representation lands between the learned <span style="color:#3a9d78;font-weight:600">SR</span> and <span style="color:#d15b6b;font-weight:600">AF</span> centroids. No classifier, just the geometry of the embedding.</p>
+      <p class="reveal" style="margin-top:10px;font-size:.9rem;color:var(--text-dim)">
+        Detection AUROC along the SR→AF axis: <strong id="stat-auroc">, </strong>
+      </p>
+      <p id="demo-status" class="reveal" style="color:var(--danger);font-size:.9rem"></p>
+    </div>
+  </header>
+
+  <section style="padding-top:30px">
+    <div class="container">
+
+      <!-- controls + score -->
+      <div class="demo-top">
+        <div class="card demo-controls">
+          <h3>Input window</h3>
+          <p class="demo-sub">Real de-identified test windows, or synthesize one.</p>
+          <div id="preset-chips" class="demo-chips"></div>
+          <div class="demo-gen">
+            <button id="gen-sr" class="btn btn-ghost">Synthesize SR</button>
+            <button id="gen-af" class="btn btn-ghost">Synthesize AF</button>
+          </div>
+
+          <hr class="divider" style="margin:18px 0">
+
+          <h3>Ablation <span class="demo-live">live</span></h3>
+          <p class="demo-sub">Change the network and watch every view update instantly.</p>
+
+          <div class="demo-ctl">
+            <label>Convolution branches</label>
+            <div class="demo-toggles">
+              <button class="demo-toggle" data-branch="0" aria-pressed="true">k=3</button>
+              <button class="demo-toggle" data-branch="1" aria-pressed="true">k=5</button>
+              <button class="demo-toggle" data-branch="2" aria-pressed="true">k=7</button>
+            </div>
+          </div>
+
+          <div class="demo-ctl">
+            <label>Temporal pooling</label>
+            <div class="demo-toggles">
+              <button class="demo-seg active" data-pool="attention">Attention</button>
+              <button class="demo-seg" data-pool="average">Average</button>
+            </div>
+          </div>
+
+          <div class="demo-ctl">
+            <label>Inject noise <span id="noise-val" class="demo-mono">0.00</span></label>
+            <input id="noise" type="range" min="0" max="1" step="0.05" value="0">
+          </div>
+        </div>
+
+        <div class="card demo-score">
+          <h3>Centroid score</h3>
+          <p class="demo-sub">Projection of the latent onto the SR→AF axis.</p>
+          <div class="gauge-head">
+            <span class="gauge-num" id="gauge-val">, </span>
+            <span class="demo-pred is-sr" id="pred-badge">, </span>
+          </div>
+          <div class="gauge">
+            <div class="gauge-track"></div>
+            <div class="gauge-tick" style="left:50%"></div>
+            <div class="gauge-marker" id="gauge-marker"></div>
+          </div>
+          <div class="gauge-ends"><span style="color:#3a9d78">μ SR · 0</span><span>boundary 0.5</span><span style="color:#d15b6b">μ AF · 1</span></div>
+          <div class="demo-cos">
+            <div><span class="demo-mono" id="cos-sr">, </span><label>cosine to μ SR</label></div>
+            <div><span class="demo-mono" id="cos-af">, </span><label>cosine to μ AF</label></div>
+          </div>
+          <p class="demo-hint">Below 0.5 the window sits nearer the SR baseline; above 0.5, nearer AF. Drop a branch or switch to average pooling and watch the score move.</p>
+        </div>
+      </div>
+
+      <!-- views -->
+      <div class="demo-views">
+        <div class="card demo-view demo-span">
+          <div class="demo-view-head"><h3>RR tachogram + attention</h3><span class="demo-sub">shaded = where the model attends</span></div>
+          <canvas id="cv-tacho" class="demo-canvas" style="height:180px"></canvas>
+        </div>
+        <div class="card demo-view">
+          <div class="demo-view-head"><h3>Poincaré plot</h3><span class="demo-sub">RRₙ vs RRₙ₊₁</span></div>
+          <canvas id="cv-poincare" class="demo-canvas" style="height:300px"></canvas>
+        </div>
+        <div class="card demo-view">
+          <div class="demo-view-head"><h3>Latent space</h3><span class="demo-sub"><i class="lgd q"></i>window <i class="lgd sr"></i>μSR <i class="lgd af"></i>μAF</span></div>
+          <canvas id="cv-latent" class="demo-canvas" style="height:300px"></canvas>
+        </div>
+      </div>
+
+      <p class="demo-foot">The latent view is a 2-D projection (x = SR→AF axis = the score, y = orthogonal principal component). Centroids are population-level here for illustration; the paper calibrates them per patient for early warning. RR shown in normalised (z-scored) units, exactly the model input.</p>
+    </div>
+  </section>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/demo.js"></script>
+</body>
+</html>

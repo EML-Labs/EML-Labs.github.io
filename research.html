@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research | EML Labs</title>
+  <meta name="description" content="The problem, objectives, and methodology behind EML Labs' patient-aware contrastive learning framework for atrial fibrillation detection.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%232f5d8a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M2 12h4l2-6 4 12 2.5-7 1.5 3H22'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <header class="page-hero">
+    <div class="container">
+      <span class="eyebrow reveal"><span class="dot"></span> Research overview</span>
+      <h1 class="reveal">Predicting AF from the timing between heartbeats</h1>
+      <p class="reveal">From a global health problem to a deployable, patient-aware machine learning framework: how the pieces fit together.</p>
+    </div>
+  </header>
+
+  <!-- BACKGROUND -->
+  <section style="padding-top:36px">
+    <div class="container split">
+      <div class="reveal prose">
+        <span class="eyebrow"><span class="dot"></span> Background</span>
+        <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem);margin:16px 0 12px">Why paroxysmal AF, and why intervals?</h2>
+        <p>Atrial fibrillation is the most common sustained heart-rhythm disorder, affecting more than 37 million people and raising stroke risk roughly fivefold. Its earliest, most treatable form, <strong>paroxysmal AF</strong>, starts and stops on its own, is often symptomless, and is easily missed by brief clinical tests.</p>
+        <p>AF reveals itself most clearly in the <strong>RR-interval sequence</strong>: the gaps between consecutive heartbeats. Both single-lead ECG and the PPG optical sensor in everyday smartwatches capture this same beat-to-beat timing, making continuous, low-cost screening realistic, especially in settings where clinical-grade monitoring is out of reach.</p>
+      </div>
+      <figure class="figure reveal">
+        <svg class="ew-svg" viewBox="0 0 440 250" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated early-warning trajectory: an AF-risk score stays low, then climbs and crosses the warning threshold roughly 50 minutes before the atrial-fibrillation onset marker.">
+          <line class="ew-grid" x1="44" y1="16" x2="424" y2="16"></line>
+          <line class="ew-grid" x1="44" y1="210" x2="424" y2="210"></line>
+          <text class="ew-axislab" x="38" y="20" text-anchor="end">1.0</text>
+          <text class="ew-axislab" x="38" y="117" text-anchor="end">0.5</text>
+          <text class="ew-axislab" x="38" y="214" text-anchor="end">0</text>
+          <text class="ew-axislab" x="44" y="230">−60 min</text>
+          <line class="ew-boundary" x1="44" y1="113" x2="424" y2="113"></line>
+          <text class="ew-boundlab" x="422" y="108" text-anchor="end">warning threshold</text>
+          <line class="ew-onset" x1="424" y1="16" x2="424" y2="210"></line>
+          <text class="ew-onsetlab" x="424" y="230" text-anchor="end">AF onset</text>
+          <path class="ew-base" d="M44,187 L69,191 L82,181 L95,185 L107,152 L120,113 L145,103 L183,94 L235,90 L285,70 L335,59 L386,39 L424,26"></path>
+          <path class="ew-line" pathLength="100" d="M44,187 L69,191 L82,181 L95,185 L107,152 L120,113 L145,103 L183,94 L235,90 L285,70 L335,59 L386,39 L424,26"></path>
+          <g class="ew-anno">
+            <circle class="ew-dot" cx="120" cy="113" r="4"></circle>
+            <line class="ew-lead" x1="120" y1="198" x2="424" y2="198"></line>
+            <line class="ew-lead" x1="120" y1="193" x2="120" y2="203"></line>
+            <line class="ew-lead" x1="424" y1="193" x2="424" y2="203"></line>
+            <text class="ew-leadlab" x="272" y="191" text-anchor="middle">≈ 50 min lead time</text>
+          </g>
+        </svg>
+        <figcaption>Precursors build over the hour before onset: the risk score crosses its warning threshold a median of ~50&nbsp;min ahead.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- CHALLENGES -->
+  <section style="padding-top:20px">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow"><span class="dot"></span> Challenges</span>
+        <h2>Four barriers to real-world deployment</h2>
+      </div>
+      <div class="grid grid-2">
+        <div class="card reveal"><h3>1 · Cross-patient generalisation</h3><p>Supervised models trained on RR dynamics perform well on average but collapse on patients outside the training distribution; sensitivity has been reported to fall from ~99% to ~86% on fully held-out patients.</p></div>
+        <div class="card reveal"><h3>2 · Representation under variability</h3><p>Standard contrastive methods treat all same-class samples as interchangeable, folding each patient's distinct physiology into one shared cluster; the very structure needed for transfer is discarded.</p></div>
+        <div class="card reveal"><h3>3 · Subtle pre-onset precursors</h3><p>The autonomic signs that precede an episode (rising vagal tone, increasing ectopic burden) are faint, individual, and unfold against each patient's own shifting baseline.</p></div>
+        <div class="card reveal"><h3>4 · Computational constraints</h3><p>Wearables impose strict limits on model size, memory, and latency. Many high-performing AF models are built for server-grade infrastructure and simply cannot run on-device.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OBJECTIVES -->
+  <section style="padding-top:20px">
+    <div class="container narrow reveal">
+      <span class="eyebrow"><span class="dot"></span> Objectives</span>
+      <h2 style="font-size:clamp(1.7rem,3.2vw,2.3rem);margin:16px 0 12px">What the project set out to do</h2>
+      <ul class="ticks">
+        <li><span>Characterise the <strong>geometry of the learned embedding</strong> under different contrastive objectives and explain why standard ones fail to generalise.</span></li>
+        <li><span>Design a <strong>patient-aware contrastive objective</strong> that preserves per-patient rhythm structure while separating AF from sinus rhythm.</span></li>
+        <li><span>Build a <strong>lightweight multi-branch encoder</strong> that runs on wearable hardware and reads both ECG and PPG intervals.</span></li>
+        <li><span>Evaluate under a <strong>strict patient-independent protocol</strong> against state-of-the-art interval-based methods.</span></li>
+        <li><span>Develop a <strong>per-patient early-warning score</strong> for AF onset, calibrated from a single labelled episode.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section style="padding-top:20px">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow"><span class="dot"></span> Model architecture</span>
+        <h2>How the encoder reads a heartbeat rhythm</h2>
+        <p>A compact multi-scale convolutional encoder, small enough for a wearable, expressive enough to separate AF from sinus rhythm.</p>
+      </div>
+      <div class="arch reveal">
+
+        <!-- Input -->
+        <div class="arch-stage">
+          <div class="as-head">
+            <div><h3>RR-interval window</h3><p class="as-sub">A short span of beat-to-beat intervals, normalised per patient.</p></div>
+            <span class="as-shape">[B, 200]</span>
+          </div>
+          <svg class="arch-sig" viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true">
+            <polyline points="8,28 20,18 32,30 44,20 56,32 68,19 80,28 92,22 104,33 116,17 128,26 140,31 152,20 164,29 176,22 188,32 200,19 212,28 224,24 236,31 248,21 260,27 272,23 284,29 296,25" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+            <rect class="scan-line" x="0" y="4" width="2.5" height="38" rx="1" fill="var(--accent)" style="--sweep:296px"/>
+          </svg>
+        </div>
+
+        <div class="arch-arrow-v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
+
+        <!-- Multi-scale branches -->
+        <div class="arch-stage">
+          <div class="as-head">
+            <div><h3>Three parallel convolutional branches</h3><p class="as-sub">The same signal is read at three scales, each branch learns a different kind of pattern.</p></div>
+            <span class="as-shape">3 × [B, 64, L]</span>
+          </div>
+
+          <div class="arch-branch">
+            <div><span class="b-k"><span class="b-dot" style="background:#3f7fe0"></span>kernel = 3</span><div class="b-desc">Subtle beat-to-beat changes</div></div>
+            <svg class="arch-sig" viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="8,28 20,18 32,30 44,20 56,32 68,19 80,28 92,22 104,33 116,17 128,26 140,31 152,20 164,29 176,22 188,32 200,19 212,28 224,24 236,31 248,21 260,27 272,23 284,29 296,25" fill="none" stroke="var(--border-strong)" stroke-width="1.3"/>
+              <polyline points="8,26 20,21 32,27 44,20 56,28 68,21 80,27 92,20 104,28 116,21 128,27 140,20 152,28 164,21 176,27 188,20 200,28 212,21 224,27 236,20 248,28 260,21 272,27 284,21 296,26" fill="none" stroke="#3f7fe0" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+              <path d="M10,41 V45 H30 V41" fill="none" stroke="#3f7fe0" stroke-width="1.3"/>
+              <rect class="conv-win" x="0" y="6" width="18" height="34" rx="3" fill="#3f7fe0" fill-opacity="0.15" stroke="#3f7fe0" style="--sweep:282px"/>
+            </svg>
+          </div>
+
+          <div class="arch-branch">
+            <div><span class="b-k"><span class="b-dot" style="background:#2fa39b"></span>kernel = 5</span><div class="b-desc">Medium-range rhythm shifts</div></div>
+            <svg class="arch-sig" viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="8,28 20,18 32,30 44,20 56,32 68,19 80,28 92,22 104,33 116,17 128,26 140,31 152,20 164,29 176,22 188,32 200,19 212,28 224,24 236,31 248,21 260,27 272,23 284,29 296,25" fill="none" stroke="var(--border-strong)" stroke-width="1.3"/>
+              <polyline points="8,24 32,19 56,28 80,21 104,27 128,20 152,28 176,20 200,27 224,21 248,27 272,21 296,25" fill="none" stroke="#2fa39b" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+              <path d="M10,41 V45 H56 V41" fill="none" stroke="#2fa39b" stroke-width="1.3"/>
+              <rect class="conv-win" x="0" y="6" width="34" height="34" rx="3" fill="#2fa39b" fill-opacity="0.15" stroke="#2fa39b" style="--sweep:266px"/>
+            </svg>
+          </div>
+
+          <div class="arch-branch">
+            <div><span class="b-k"><span class="b-dot" style="background:#8a6fd0"></span>kernel = 7</span><div class="b-desc">Long-range trends &amp; drift</div></div>
+            <svg class="arch-sig" viewBox="0 0 300 46" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="8,28 20,18 32,30 44,20 56,32 68,19 80,28 92,22 104,33 116,17 128,26 140,31 152,20 164,29 176,22 188,32 200,19 212,28 224,24 236,31 248,21 260,27 272,23 284,29 296,25" fill="none" stroke="var(--border-strong)" stroke-width="1.3"/>
+              <polyline points="8,28 44,24 80,21 116,19 152,19 188,20 224,23 260,26 296,28" fill="none" stroke="#8a6fd0" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+              <path d="M10,41 V45 H98 V41" fill="none" stroke="#8a6fd0" stroke-width="1.3"/>
+              <rect class="conv-win" x="0" y="6" width="60" height="34" rx="3" fill="#8a6fd0" fill-opacity="0.15" stroke="#8a6fd0" style="--sweep:240px"/>
+            </svg>
+          </div>
+
+          <p class="arch-note">Each branch: 3 stride-2 conv blocks, 16 → 32 → 64 channels, with GroupNorm + ReLU. Short kernels see fine detail; long kernels see the broad trend.</p>
+        </div>
+
+        <div class="arch-arrow-v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
+
+        <!-- Channel mix -->
+        <div class="arch-stage">
+          <div class="as-head">
+            <div><h3>Concatenate + 1×1 channel mix</h3><p class="as-sub">A 1×1 convolution blends the three scales into joint multi-scale features.</p></div>
+            <span class="as-shape">[B, 192, L]</span>
+          </div>
+          <svg class="arch-svg" viewBox="0 0 340 76" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="max-height:88px">
+            <defs><linearGradient id="mixgrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#3f7fe0"/><stop offset="0.5" stop-color="#2fa39b"/><stop offset="1" stop-color="#8a6fd0"/>
+            </linearGradient></defs>
+            <rect x="24" y="10" width="112" height="15" rx="4" fill="#3f7fe0" opacity="0.85"/>
+            <rect x="24" y="31" width="112" height="15" rx="4" fill="#2fa39b" opacity="0.85"/>
+            <rect x="24" y="52" width="112" height="15" rx="4" fill="#8a6fd0" opacity="0.85"/>
+            <path d="M158,38 H196 M188,31 L196,38 L188,45" fill="none" stroke="var(--text-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="214" y="10" width="102" height="57" rx="6" fill="url(#mixgrad)" opacity="0.9"/>
+            <circle class="mix-p mp1" cx="136" cy="17.5" r="4.5" fill="#3f7fe0" style="--dx:129px;--dy:20.5px"/>
+            <circle class="mix-p mp2" cx="136" cy="38.5" r="4.5" fill="#2fa39b" style="--dx:129px;--dy:-0.5px"/>
+            <circle class="mix-p mp3" cx="136" cy="59.5" r="4.5" fill="#8a6fd0" style="--dx:129px;--dy:-21.5px"/>
+          </svg>
+        </div>
+
+        <div class="arch-arrow-v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
+
+        <!-- Temporal attention -->
+        <div class="arch-stage">
+          <div class="as-head">
+            <div><h3>Temporal attention pooling</h3><p class="as-sub">A learned weight per time step, then a weighted sum, informative segments count more.</p></div>
+            <span class="as-shape">[B, 192]</span>
+          </div>
+          <svg class="arch-svg" viewBox="0 0 340 88" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="max-height:104px">
+            <line x1="10" y1="66" x2="330" y2="66" stroke="var(--border)" stroke-width="1"/>
+            <rect x="14"  y="50" width="9" height="16" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="31.5" y="46" width="9" height="20" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="49"  y="52" width="9" height="14" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="66.5" y="44" width="9" height="22" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="84"  y="40" width="9" height="26" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="101.5" y="42" width="9" height="24" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="119" y="34" width="9" height="32" rx="2" fill="var(--text-dim)" opacity="0.7"/>
+            <rect class="att-hot" x="136.5" y="26" width="9" height="40" rx="2" fill="var(--accent)"/>
+            <rect class="att-hot" x="154" y="16" width="9" height="50" rx="2" fill="var(--accent)"/>
+            <rect class="att-hot" x="171.5" y="12" width="9" height="54" rx="2" fill="var(--accent)"/>
+            <rect class="att-hot" x="189" y="20" width="9" height="46" rx="2" fill="var(--accent)"/>
+            <rect x="206.5" y="30" width="9" height="36" rx="2" fill="var(--text-dim)" opacity="0.7"/>
+            <rect x="224" y="40" width="9" height="26" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="241.5" y="46" width="9" height="20" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="259" y="50" width="9" height="16" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="276.5" y="48" width="9" height="18" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="294" y="52" width="9" height="14" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <rect x="311.5" y="50" width="9" height="16" rx="2" fill="var(--text-dim)" opacity="0.55"/>
+            <text x="171" y="82" text-anchor="middle" font-size="11" fill="var(--accent)" font-family="'Source Serif 4', serif">most informative segment</text>
+            <rect class="att-scan" x="0" y="10" width="2.5" height="56" rx="1" fill="var(--accent)" style="--sweep:326px"/>
+          </svg>
+        </div>
+
+        <div class="arch-arrow-v"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
+
+        <!-- Projection / outputs -->
+        <div class="arch-stage key">
+          <div class="as-head">
+            <div><h3>Projection to embeddings</h3><p class="as-sub">A linear layer gives the latent; a small MLP head gives the contrastive embedding. Both are ℓ₂-normalised.</p></div>
+          </div>
+          <div class="arch-embed">
+            <div class="arch-chip"><span class="cv">Latent</span><span class="cs">[B, 128] · ℓ₂</span></div>
+            <div class="arch-mini-arrow">MLP head&nbsp;→</div>
+            <div class="arch-chip key"><span class="cv">Embedding</span><span class="cs">[B, d] · ℓ₂</span></div>
+          </div>
+          <div class="arch-outs">
+            <div class="arch-out"><span class="ao-k">Latent</span> → linear probe → <strong>SR vs. AFib</strong></div>
+            <div class="arch-out"><span class="ao-k">Embedding</span> → <strong>patient-aware contrastive loss</strong></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section style="padding-top:20px">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow"><span class="dot"></span> Methodology</span>
+        <h2>The pipeline, end to end</h2>
+        <p>From raw intervals on the wrist to a calibrated, patient-specific warning score.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg></div><h3>1 · Signal &amp; preprocessing</h3><p>RR intervals (ECG) and pulse intervals (PPG) are segmented into fixed windows and cleaned, a single pipeline for either modality.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="12" r="2"/><path d="M8 6h4l4 5M8 18h4l4-5"/></svg></div><h3>2 · Patient-aware pretraining</h3><p>The encoder learns representations with positive pairs limited to same-patient, same-class segments, preserving individual baselines.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><h3>3 · Lightweight probe</h3><p>A small linear classifier on top of the frozen embedding detects AF with only a handful of labels, cheap to train and to run.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-6"/></svg></div><h3>4 · Geometry analysis</h3><p>We quantify per-patient cohesion and class separability to explain, not just measure, why the approach transfers.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div><h3>5 · Personal early warning</h3><p>A personal sinus-to-AF axis is calibrated per patient; later segments are scored by how far they drift along it.</p></div>
+        <div class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 3 2 4 2 7h10c0-3 2-4 2-7a7 7 0 0 0-7-7z"/><path d="M9 22h6"/></svg></div><h3>6 · Zero-shot validation</h3><p>The frozen encoder is tested on an entirely separate dataset (SHDB-AF) with no fine-tuning, probing true robustness.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY INSIGHT -->
+  <section style="padding-top:20px">
+    <div class="container">
+      <div class="cta-band reveal">
+        <span class="eyebrow" style="margin-bottom:14px"><span class="dot"></span> Key insight</span>
+        <h2>The “BCE paradox”</h2>
+        <p>Binary cross-entropy training produces the <em>cleanest</em> global class separation, yet the <em>most disordered</em> per-patient structure and the <em>worst</em> transfer to unseen patients. Clean global separation is a misleading indicator; per-subject geometric consistency is the real predictor of robust generalisation.</p>
+        <a class="btn btn-primary" href="results.html">See the evidence
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

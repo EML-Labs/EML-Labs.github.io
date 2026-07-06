@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publications | EML Labs</title>
+  <meta name="description" content="Research papers and project artefacts from EML Labs' final year project on patient-aware atrial fibrillation detection and on-device PPG peak detection.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%232f5d8a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M2 12h4l2-6 4 12 2.5-7 1.5 3H22'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <header class="page-hero">
+    <div class="container">
+      <span class="eyebrow reveal">Publications &amp; downloads</span>
+      <h1 class="reveal">Research papers &amp; project artefacts</h1>
+      <p class="reveal">Papers from the project spanning patient-aware detection, on-device deployment, and FPGA peak detection, plus the full dissertation, poster, and proposal.</p>
+    </div>
+  </header>
+
+  <!-- PAPERS -->
+  <section style="padding-top:36px">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Research papers</span>
+        <h2>Peer-reviewed &amp; preprint</h2>
+      </div>
+      <div class="grid" style="gap:16px">
+
+        <!-- Primary: comprehensive short paper -->
+        <div class="pub reveal">
+          <span class="pub-type">Paper · Comprehensive</span>
+          <div>
+            <h3>PPG-Based AFib Prediction at Resource-Constrained Environments</h3>
+            <p class="pub-meta">Y. Niroshana, W. M. Wimalasiri, C. Hettiarachchi · Patient-aware detection, per-patient early warning (median 50.9 min lead) &amp; on-device Apple Watch deployment (156 µs, 33 KB)</p>
+          </div>
+          <div class="pub-actions">
+            <a class="btn btn-primary" href="assets/pdf/paper.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M14 3l6 6v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+              PDF
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/EML-Labs/pacl-rri-af" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 2.5-.34c.85 0 1.71.12 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+              Code
+            </a>
+            <a class="btn btn-ghost" href="#bibtex">Cite</a>
+          </div>
+        </div>
+
+        <!-- Paper 1: ICML 2026 Workshop (arXiv) -->
+        <div class="pub reveal">
+          <span class="pub-type">Accepted · ICML 2026 Workshop</span>
+          <div>
+            <h3>Patient-Aware Contrastive Learning Preserves Per-Patient Structure in RR-Interval Representations</h3>
+            <p class="pub-meta">Y. Niroshana*, W. Wimalasiri*, C. Hettiarachchi &nbsp;(*equal contribution) · Accepted at the GlobalSouthML Workshop, ICML 2026 · arXiv:2606.23570</p>
+          </div>
+          <div class="pub-actions">
+            <a class="btn btn-primary" href="assets/pdf/paper_arxiv.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M14 3l6 6v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+              PDF
+            </a>
+            <a class="btn btn-ghost" href="https://arxiv.org/abs/2606.23570" target="_blank" rel="noopener">arXiv</a>
+            <a class="btn btn-ghost" href="https://icml.cc/virtual/2026/78355" target="_blank" rel="noopener">ICML</a>
+            <a class="btn btn-ghost" href="https://github.com/EML-Labs/pacl-rri-af" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 2.5-.34c.85 0 1.71.12 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+              Code
+            </a>
+          </div>
+        </div>
+
+        <!-- Paper 2: MERCon preprint -->
+        <div class="pub reveal">
+          <span class="pub-type">Preprint · MERCon</span>
+          <div>
+            <h3>Patient-Aware Contrastive Learning for Paroxysmal Atrial Fibrillation Detection Using RR Intervals</h3>
+            <p class="pub-meta">Y. Niroshana, W. M. Wimalasiri, J. P. Kulasingham, C. Hettiarachchi · Moratuwa Engineering Research Conference (MERCon), preprint</p>
+          </div>
+          <div class="pub-actions">
+            <a class="btn btn-primary" href="assets/pdf/mercon_paper.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M14 3l6 6v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+              PDF
+            </a>
+            <a class="btn btn-ghost" href="#bibtex">Cite</a>
+          </div>
+        </div>
+
+        <!-- Paper 3: FPGA / ERU 2025 -->
+        <div class="pub reveal">
+          <span class="pub-type">Published · ERU Symposium 2025</span>
+          <div>
+            <h3>Peak Detection of PPG Signals Using Fixed-Point Digital Filters Implemented in VHDL</h3>
+            <p class="pub-meta">H. K. Y. Niroshana, W. M. Wimalasiri, C. Hettiarachchi · ERU Symposium 2025, University of Moratuwa · FPGA / VHDL on-device PPG peak detection</p>
+          </div>
+          <div class="pub-actions">
+            <a class="btn btn-primary" href="assets/pdf/paper_fpga.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M14 3l6 6v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+              PDF
+            </a>
+            <a class="btn btn-ghost" href="https://dl.lib.uom.lk/items/73c999d1-3082-4812-94ae-30e70bf6d68a" target="_blank" rel="noopener">Publication</a>
+            <a class="btn btn-ghost" href="https://github.com/EML-Labs/PPG-Peak-Detection-on-FPGA" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 2.5-.34c.85 0 1.71.12 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+              Code
+            </a>
+            <a class="btn btn-ghost" href="#bibtex">Cite</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ARTEFACTS -->
+  <section style="padding-top:20px">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Project artefacts</span>
+        <h2>Reports &amp; presentation</h2>
+      </div>
+      <div class="grid" style="gap:16px">
+
+        <div class="pub reveal">
+          <span class="pub-type">Dissertation</span>
+          <div>
+            <h3>PPG-Based AFib Prediction in Resource-Constrained Environments</h3>
+            <p class="pub-meta">Final Year Research Project · Full dissertation with methodology, experiments, and early-warning study</p>
+          </div>
+          <div class="pub-actions">
+            <a class="btn btn-primary" href="assets/pdf/final_report.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M14 3l6 6v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+              PDF
+            </a>
+          </div>
+        </div>
+
+        <div class="pub reveal">
+          <span class="pub-type">Poster</span>
+          <div>
+            <h3>Patient-Aware Contrastive Learning, Research Poster</h3>
+            <p class="pub-meta">Visual summary of the framework, architecture, and headline results</p>
+          </div>
+          <div class="pub-actions">
+            <a class="btn btn-primary" href="assets/pdf/poster.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M14 3l6 6v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+              PDF
+            </a>
+          </div>
+        </div>
+
+        <div class="pub reveal">
+          <span class="pub-type">Proposal</span>
+          <div>
+            <h3>Edge-Based Predictive Framework for AF Using PPG, Project Proposal</h3>
+            <p class="pub-meta">Original research proposal outlining the problem, objectives, and planned methodology</p>
+          </div>
+          <div class="pub-actions">
+            <a class="btn btn-primary" href="assets/pdf/project_proposal.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5M14 3l6 6v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+              PDF
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BIBTEX -->
+  <section id="bibtex" style="padding-top:20px">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Citation</span>
+        <h2>Cite this work</h2>
+        <p>BibTeX for the accepted ICML 2026 workshop paper, the MERCon preprint, and the ERU 2025 paper.</p>
+      </div>
+      <div class="codeblock reveal">
+<span class="k">@inproceedings</span>{niroshana2026patientaware,<br>
+&nbsp;&nbsp;title&nbsp;&nbsp;&nbsp;&nbsp;= {Patient-Aware Contrastive Learning Preserves Per-Patient Structure in RR-Interval Representations},<br>
+&nbsp;&nbsp;author&nbsp;&nbsp;&nbsp;= {Niroshana, Yasantha and Wimalasiri, Weijith and Hettiarachchi, Chathuranga},<br>
+&nbsp;&nbsp;booktitle = {GlobalSouthML Workshop, International Conference on Machine Learning (ICML)},<br>
+&nbsp;&nbsp;year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {2026},<br>
+&nbsp;&nbsp;note&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {arXiv:2606.23570}<br>
+}<br>
+<br>
+<span class="k">@misc</span>{niroshana2025patientawaremercon,<br>
+&nbsp;&nbsp;title&nbsp;&nbsp;&nbsp;&nbsp;= {Patient-Aware Contrastive Learning for Paroxysmal Atrial Fibrillation Detection Using RR Intervals},<br>
+&nbsp;&nbsp;author&nbsp;&nbsp;&nbsp;= {Niroshana, Yasantha and Wimalasiri, Weijith Manula and Kulasingham, Joshua Pranjeevan and Hettiarachchi, Chathuranga},<br>
+&nbsp;&nbsp;year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {2025},<br>
+&nbsp;&nbsp;note&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {Preprint, Moratuwa Engineering Research Conference (MERCon)}<br>
+}<br>
+<br>
+<span class="k">@inproceedings</span>{niroshana2025peakdetection,<br>
+&nbsp;&nbsp;title&nbsp;&nbsp;&nbsp;&nbsp;= {Peak Detection of PPG Signals Using Fixed-Point Digital Filters Implemented in VHDL},<br>
+&nbsp;&nbsp;author&nbsp;&nbsp;&nbsp;= {Niroshana, H. K. Y. and Wimalasiri, Weijith Manula and Hettiarachchi, Chathuranga},<br>
+&nbsp;&nbsp;booktitle = {Engineering Research Unit (ERU) Symposium},<br>
+&nbsp;&nbsp;year&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {2025},<br>
+&nbsp;&nbsp;organization = {University of Moratuwa},<br>
+&nbsp;&nbsp;url&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {https://dl.lib.uom.lk/items/73c999d1-3082-4812-94ae-30e70bf6d68a}<br>
+}
+      </div>
+    </div>
+  </section>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
